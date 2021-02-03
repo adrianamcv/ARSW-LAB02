@@ -69,8 +69,7 @@ Parte III
     
     Rta: se utiliza el la función **synchronized** en la clase **Galgo** donde se encuentra el metodo **corra**, donde con esto solucionamos el error de las posiciones repetidas y le damos un orden, el siguiente codigo es la solución:
     
-    '''java
-    
+    ```java
     public void corra() throws InterruptedException {
     		while (paso < carril.size()) {
     			if (bandera == true) {
@@ -95,7 +94,7 @@ Parte III
     			}
     		}
     	}
-       '''
+       ```
     
 
 4.  Implemente las funcionalidades de pausa y continuar. Con estas,
@@ -105,7 +104,7 @@ Parte III
 
     Rta: Para realizar estos metodos, los hacemos por el medio de banderas, donde en la clase **Galgo** implementamos dos metodos:
     
-    '''java
+    ```java
     public void pause() {
     		bandera = true;
     	}
@@ -114,11 +113,11 @@ Parte III
     			notifyAll();
     		}
     	}
-    ''' 
+    ```
     
     y en el metodo corra, colocamos un condicional:
     
-    '''java
+    ```java
     public void corra() throws InterruptedException {
     		while (paso < carril.size()) {
     			if (bandera == true) {
@@ -143,12 +142,12 @@ Parte III
     			}
     		}
     	}
-    '''
+    ```
     
     y en la clase **MainCanodromo**, complementamos las acciones de pausar y continuar:
     
     
-    '''java
+    ```java
     can.setStopAction(
                     new ActionListener() {
                         @Override
@@ -171,5 +170,5 @@ Parte III
                         }
                     }
             );
-    '''
+    ```
     
