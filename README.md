@@ -70,6 +70,7 @@ Parte III
     Rta: se utiliza el la función **synchronized** en la clase **Galgo** donde se encuentra el metodo **corra**, donde con esto solucionamos el error de las posiciones repetidas y le damos un orden, el siguiente codigo es la solución:
     
     '''java
+    
     public void corra() throws InterruptedException {
     		while (paso < carril.size()) {
     			if (bandera == true) {
@@ -81,7 +82,6 @@ Parte III
     			Thread.sleep(100);
     			carril.setPasoOn(paso++);
     			carril.displayPasos(paso);
-    			
     			if (paso == carril.size()) {						
     				carril.finish();
     				synchronized (regl) {
@@ -92,11 +92,11 @@ Parte III
     						regl.setGanador(this.getName());
     					}
     				}
-    				
     			}
     		}
     	}
-    '''
+       '''
+    
 
 4.  Implemente las funcionalidades de pausa y continuar. Con estas,
     cuando se haga clic en ‘Stop’, todos los hilos de los galgos
@@ -104,19 +104,20 @@ Parte III
     deberían despertarse y continuar con la carrera. Diseñe una solución que permita hacer esto utilizando los mecanismos de sincronización con las primitivas de los Locks provistos por el lenguaje (wait y notifyAll).
 
     Rta: Para realizar estos metodos, los hacemos por el medio de banderas, donde en la clase **Galgo** implementamos dos metodos:
+    
     '''java
     public void pause() {
     		bandera = true;
     	}
-    
-    
     	public void continuar() {
     		synchronized (this){
     			notifyAll();
     		}
     	}
     ''' 
+    
     y en el metodo corra, colocamos un condicional:
+    
     '''java
     public void corra() throws InterruptedException {
     		while (paso < carril.size()) {
@@ -129,7 +130,6 @@ Parte III
     			Thread.sleep(100);
     			carril.setPasoOn(paso++);
     			carril.displayPasos(paso);
-    			
     			if (paso == carril.size()) {						
     				carril.finish();
     				synchronized (regl) {
@@ -140,12 +140,14 @@ Parte III
     						regl.setGanador(this.getName());
     					}
     				}
-    				
     			}
     		}
     	}
     '''
+    
     y en la clase **MainCanodromo**, complementamos las acciones de pausar y continuar:
+    
+    
     '''java
     can.setStopAction(
                     new ActionListener() {
@@ -158,7 +160,6 @@ Parte III
                         }
                     }
             );
-    
             can.setContinueAction(
                     new ActionListener() {
                         @Override
