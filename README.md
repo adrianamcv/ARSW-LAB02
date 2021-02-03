@@ -51,6 +51,8 @@ Parte III
     a.  La acción de iniciar la carrera y mostrar los resultados se realiza a partir de la línea 38 de MainCanodromo.
 
     b.  Puede utilizarse el método join() de la clase Thread para sincronizar el hilo que inicia la carrera, con la finalización de los hilos de los galgos.
+    
+    Rta: Para poder que los resultados se mostraran en pantalla una vez que todos los hilos de ejecición finalizaran se utilizó el metodo **join()** de la clase Main, con la cual se soliciono el problema que encontramos.
 
 2.  Una vez corregido el problema inicial, corra la aplicación varias
     veces, e identifique las inconsistencias en los resultados de las
@@ -58,13 +60,115 @@ Parte III
     podrían salir resultados válidos, pero en otros se pueden presentar
     dichas inconsistencias). A partir de esto, identifique las regiones
     críticas () del programa.
+    
+    Rta: Se encontraron inconsistencias en el resultado del programa, ya que las posiciones se repetian o no tenian orden.
 
 3.  Utilice un mecanismo de sincronización para garantizar que a dichas
     regiones críticas sólo acceda un hilo a la vez. Verifique los
     resultados.
+    
+    Rta: se utiliza el la función **synchronized** en la clase **Galgo** donde se encuentra el metodo **corra**, donde con esto solucionamos el error de las posiciones repetidas y le damos un orden, el siguiente codigo es la solución:
+    
+    '''java
+    public void corra() throws InterruptedException {
+    		while (paso < carril.size()) {
+    			if (bandera == true) {
+    				synchronized (this) {
+    					wait();
+    					bandera = false;
+    				}
+    			}
+    			Thread.sleep(100);
+    			carril.setPasoOn(paso++);
+    			carril.displayPasos(paso);
+    			
+    			if (paso == carril.size()) {						
+    				carril.finish();
+    				synchronized (regl) {
+    					int ubicacion = regl.getUltimaPosicionAlcanzada();
+    					regl.setUltimaPosicionAlcanzada(ubicacion + 1);
+    					System.out.println("El galgo " + this.getName() + " llego en la posicion " + ubicacion);
+    					if (ubicacion == 1) {
+    						regl.setGanador(this.getName());
+    					}
+    				}
+    				
+    			}
+    		}
+    	}
+    '''
 
 4.  Implemente las funcionalidades de pausa y continuar. Con estas,
     cuando se haga clic en ‘Stop’, todos los hilos de los galgos
     deberían dormirse, y cuando se haga clic en ‘Continue’ los mismos
     deberían despertarse y continuar con la carrera. Diseñe una solución que permita hacer esto utilizando los mecanismos de sincronización con las primitivas de los Locks provistos por el lenguaje (wait y notifyAll).
 
+    Rta: Para realizar estos metodos, los hacemos por el medio de banderas, donde en la clase **Galgo** implementamos dos metodos:
+    '''java
+    public void pause() {
+    		bandera = true;
+    	}
+    
+    
+    	public void continuar() {
+    		synchronized (this){
+    			notifyAll();
+    		}
+    	}
+    ''' 
+    y en el metodo corra, colocamos un condicional:
+    '''java
+    public void corra() throws InterruptedException {
+    		while (paso < carril.size()) {
+    			if (bandera == true) {
+    				synchronized (this) {
+    					wait();
+    					bandera = false;
+    				}
+    			}
+    			Thread.sleep(100);
+    			carril.setPasoOn(paso++);
+    			carril.displayPasos(paso);
+    			
+    			if (paso == carril.size()) {						
+    				carril.finish();
+    				synchronized (regl) {
+    					int ubicacion = regl.getUltimaPosicionAlcanzada();
+    					regl.setUltimaPosicionAlcanzada(ubicacion + 1);
+    					System.out.println("El galgo " + this.getName() + " llego en la posicion " + ubicacion);
+    					if (ubicacion == 1) {
+    						regl.setGanador(this.getName());
+    					}
+    				}
+    				
+    			}
+    		}
+    	}
+    '''
+    y en la clase **MainCanodromo**, complementamos las acciones de pausar y continuar:
+    '''java
+    can.setStopAction(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            for (Galgo g : galgos){
+                                g.pause();
+                            }
+                            System.out.println("Carrera pausada!");
+                        }
+                    }
+            );
+    
+            can.setContinueAction(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            for (Galgo g : galgos){
+                                g.continuar();
+                            }
+                            System.out.println("Carrera reanudada!");
+                        }
+                    }
+            );
+    '''
+    
